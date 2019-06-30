@@ -3,57 +3,111 @@
     <style>
         body {
             background-color: #111111;
+            color: red;
         }
-        canvas {
+        #canvas {
             border: 1px solid red;
         }
     </style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
+<h3>Speed Development</h3>
+<canvas id="graph"></canvas>
 </body>
 <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+    let hist = [];
+    // Graph
+    !(function() {
+        const canvas = document.getElementById("graph");
+        const ctx = canvas.getContext("2d");
+        canvas.width = 600;
+        canvas.height = 300;
 
-    canvas.width = window.innerWidth - 20;
-    canvas.height = 120;
+        function loop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    let x = 0;
-    let y = 100;
-    let r = 3;
-    let d = 0;
+            // Y Axis
+            ctx.beginPath();
+            ctx.strokeStyle = "red";
+            ctx.moveTo(50, 20);
+            ctx.lineTo(50, canvas.height - 30);
+            ctx.stroke();
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "red";
+            ctx.fillText("Speed", 25, 15);
 
-    let collisions = 5;
+            // X Axis
+            ctx.beginPath();
+            ctx.moveTo(50, canvas.height - 30);
+            ctx.lineTo(canvas.width - 20, canvas.height - 30);
+            ctx.stroke();
+            ctx.fillText("Collisions", canvas.width - 90, canvas.height - 35);
 
-    function loop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (x < 0) {
-            collisions += collisions.toString().length;
-            d = 0;
-        } else if (x > canvas.width) {
-            collisions += collisions.toString().length;
-            d = 1;
+            window.requestAnimationFrame(loop);
         }
 
+        window.requestAnimationFrame(loop);
 
-        if (d === 0) x += 8 + (collisions * 2);
-        else x -= 8 + (collisions * 2);
+    })();
 
-        ctx.beginPath();
-        ctx.fillStyle = "red";
-        ctx.arc(x, y, r, 0, 2 * Math.PI);
-        ctx.fill();
 
-        ctx.font = "16px Arial";
-        ctx.fillText("Border Collisions: " + collisions, canvas.width / 3, 20);
-        ctx.fillText("Speed: " + (8 + (collisions * 2)), canvas.width / 3, 40);
+    // Ball Canvas
+    !(function() {
+        // TODO:...
+        function isInArray(arr) {
+            for(let i=0;i<arr.length;++i) {
+
+            }
+        }
+
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth - 20;
+        canvas.height = 120;
+
+        let x = 0;
+        let y = 100;
+        let r = 3;
+        let d = 0;
+
+        let collisions = 5;
+
+        function loop() {
+            let speed = 8 + (collisions * 2);
+            hist.splice(0, hist.length - 10);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (x < 0) {
+                collisions += collisions.toString().length;
+                d = 0;
+            } else if (x > canvas.width) {
+                collisions += collisions.toString().length;
+                d = 1;
+            }
+
+
+            if (d === 0) x += speed;
+            else x -= speed;
+
+            ctx.beginPath();
+            ctx.fillStyle = "red";
+            ctx.arc(x, y, r, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.font = "16px Arial";
+
+            ctx.fillText("Border Collisions: " + collisions, canvas.width / 3, 20);
+            ctx.fillText("Speed: " + speed, canvas.width / 3, 40);
+
+            hist.push({
+                collisions,
+                speed
+            });
+            window.requestAnimationFrame(loop);
+        }
 
         window.requestAnimationFrame(loop);
-    }
-
-    window.requestAnimationFrame(loop);
-
+    })();
 </script>
 </html>
