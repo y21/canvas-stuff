@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <style>
+            body {
+                background-color: #111111;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+    </body>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const lines = [];
+
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight - 20;
+
+        const DIRECTIONS = {
+            TOP_LEFT: 0,
+            TOP_RIGHT: 1,
+            BOTTOM_RIGHT: 2,
+            BOTTOM_LEFT: 3
+        };
+
+        class Line {
+            constructor(startX, startY, endX, endY, color, direction) {
+                // If constructor was called with Line object
+                if (startX instanceof Line && arguments.length === 1) {
+                    this.startX = startX.startX;
+                    this.startY = startX.startY;
+                    this.endX = startX.endX;
+                    this.endY = startX.endY;
+                    this.color = startX.color;
+                    this.direction = startX.direction;
+                } else {
+                    this.startX = startX;
+                    this.startY = startY;
+                    this.endX = endX;
+                    this.endY = endY;
+                    this.color = color;
+                    this.direction = direction;
+                }
+
+                this.stopAnimation = false;
+            }
+
+            move() {
+                switch(this.direction) {
+                    case DIRECTIONS.TOP_LEFT: this.endX -= 2; this.endY -= 2; break;
+                    case DIRECTIONS.TOP_RIGHT: this.endX += 2; this.endY -= 2; break;
+                    case DIRECTIONS.BOTTOM_RIGHT: this.endX += 2; this.endY += 2; break;
+                    case DIRECTIONS.BOTTOM_LEFT: this.endX -= 2; this.endY += 2; break;
+                }
+
+                return this;
+            }
+
+            collide() {
+                return this.endX < 0 || this.endX > canvas.width || this.endY < 0 || this.endY > canvas.height;
+            }
+
+            display() {
+                ctx.beginPath();
+                ctx.strokeStyle = `#${this.color.toString(16)}`;
+                ctx.moveTo(this.startX, this.startY);
+                ctx.lineTo(this.endX, this.endY);
+                ctx.stroke();
+            }
+        };
+        
+        for(let i=0;i<1000;++i) {
+            const pos = {
+                x: Math.floor(Math.random() * canvas.width),
+                y: Math.floor(Math.random() * canvas.height)
+            };
+
+            const line = new Line(
+                pos.x,
+                pos.y,
+                pos.x,
+                pos.y,
+                (0xFF0000).toString(16),
+                Math.floor(Math.random() * 4)
+            );
+            lines.push(line);
+        }
+
+
+
+        function animationLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i=0;i<lines.length;++i) {
+                const line = lines[i];
+                if (line.color === 0xFFFFFF) line.color = 0;
+                else line.color += 0x10;
+                if (line.collide()) line.direction = Math.floor(Math.random() * 4);
+                line.move();
+                line.display();
+            }
+
+
+            window.requestAnimationFrame(animationLoop);
+        }
+
+        window.requestAnimationFrame(animationLoop);
+    </script>
+</html>
