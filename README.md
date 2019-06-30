@@ -1,2 +1,2 @@
-https://github.com/y21/drop.html<br/>
-https://github.com/y21/shade.html<br/>
+https://y21.github.io/canvas-stuff/drop.html<br/>
+https://y21.github.io/canvas-stuff/shade.html<br/>
