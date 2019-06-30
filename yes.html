@@ -1,0 +1,59 @@
+<html>
+<head>
+    <style>
+        body {
+            background-color: #111111;
+        }
+        canvas {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+<script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth - 20;
+    canvas.height = 120;
+
+    let x = 0;
+    let y = 100;
+    let r = 3;
+    let d = 0;
+
+    let collisions = 5;
+
+    function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (x < 0) {
+            collisions += collisions.toString().length;
+            d = 0;
+        } else if (x > canvas.width) {
+            collisions += collisions.toString().length;
+            d = 1;
+        }
+
+
+        if (d === 0) x += 8 + (collisions * 2);
+        else x -= 8 + (collisions * 2);
+
+        ctx.beginPath();
+        ctx.fillStyle = "red";
+        ctx.arc(x, y, r, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.font = "16px Arial";
+        ctx.fillText("Border Collisions: " + collisions, canvas.width / 4, 20);
+        ctx.fillText("Speed: " + (8 + (collisions * 2)), canvas.width / 4, 40);
+
+        window.requestAnimationFrame(loop);
+    }
+
+    window.requestAnimationFrame(loop);
+
+</script>
+</html>
