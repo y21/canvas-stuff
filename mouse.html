@@ -1,0 +1,39 @@
+<head><style>body{background-color:#000000;}canvas{position:fixed;top:0;left:0;}</style></head>
+<body><canvas id="c" width="600" height="600"></canvas></body>
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+const colors = ["#222222","#666666","#999999","#aaaaaa","#bbbbbb","#cccccc"];
+const lines = [];
+const randnum = (min, max) => Math.floor(Math.random() * max) + min;
+let focusCoord = [randnum(0,canvas.width),randnum(0,canvas.height)];
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+for(let i=0;i<50;++i) {
+	let x = randnum(0, canvas.width);
+	let y = randnum(0, canvas.height);
+	lines.push({
+		x, y,
+		startX: x,
+		startY: y,
+		color: colors[randnum(0, colors.length)]
+	});
+}
+
+function anim() {
+
+	window.requestAnimationFrame(anim);
+}
+window.requestAnimationFrame(anim);
+
+canvas.addEventListener("mousemove", d => {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	for(let i=0;i<lines.length;++i) {
+		ctx.beginPath();
+		ctx.strokeStyle = lines[i].color;
+		ctx.moveTo(lines[i].x += randnum(0, 0), lines[i].y += randnum(0, 0));
+		ctx.lineTo(d.clientX, d.clientY);
+		ctx.stroke();
+	}
+});
+</script>
